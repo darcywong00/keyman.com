@@ -6,8 +6,8 @@ set -eu
 
 ## START STANDARD BUILD SCRIPT INCLUDE
 # adjust relative paths as necessary
-THIS_SCRIPT="$(greadlink -f "${BASH_SOURCE[0]}" 2>/dev/null || readlink -f "${BASH_SOURCE[0]}")"
-. "$(dirname "$THIS_SCRIPT")/resources/builder.inc.sh"
+THIS_SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+. "${THIS_SCRIPT%/*}/resources/builder.inc.sh"
 ## END STANDARD BUILD SCRIPT INCLUDE
 
 ################################ Main script ################################
@@ -25,7 +25,7 @@ function _stop_docker_container() {
   if [ ! -z "$KEYMAN_CONTAINER" ]; then
     docker container stop $KEYMAN_CONTAINER
   else
-    echo "No Docker container to stop"
+    builder_echo "No Docker container to stop"
   fi
 }
 
@@ -56,14 +56,14 @@ if builder_start_action clean; then
   if [ ! -z "$KEYMAN_CONTAINER" ]; then
     docker container rm $KEYMAN_CONTAINER
   else
-    echo "No Docker container to clean"
+    builder_echo "No Docker container to clean"
   fi
     
   KEYMAN_IMAGE=$(_get_docker_image_id)
   if [ ! -z "$KEYMAN_IMAGE" ]; then
     docker rmi keyman-website
   else 
-    echo "No Docker image to clean"
+    builder_echo "No Docker image to clean"
   fi
 
   builder_finish_action success clean
@@ -92,20 +92,20 @@ if builder_start_action start; then
       docker run -d -p 8053:80 -v $(pwd):/var/www/html/ -e S_KEYMAN_COM=localhost:8054 keyman-website
     fi
   else
-    echo "${COLOR_RED}ERROR: Docker container doesn't exist. Run ./build.sh build first${COLOR_RESET}"
+    builder_echo error "ERROR: Docker container doesn't exist. Run ./build.sh build first"
     builder_finish_action fail start
   fi
 
   # Skip if link already exists
   if [ -L vendor ]; then
-    echo "Link to vendor/ already exists"
+    builder_echo "Link to vendor/ already exists"
   else
     # Create link to vendor/ folder
     KEYMAN_CONTAINER=$(_get_docker_container_id)
     if [ ! -z "$KEYMAN_CONTAINER" ]; then
       docker exec -i $KEYMAN_CONTAINER sh -c "ln -s /var/www/vendor vendor && chown -R www-data:www-data vendor"
     else
-      echo "No Docker container running to create link to vendor/"
+      builder_echo "No Docker container running to create link to vendor/"
     fi
   fi
 
