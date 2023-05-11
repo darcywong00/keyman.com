@@ -40,9 +40,11 @@ RedirectMatch "(?i)^/desktop(\/.*)?" "/windows$1"
 
 # TODO: Permanent redirects 301?
 
+# Stop processing rendered page (new)
+# RewriteRule "^keyboards/keyboard.php(.*)$" - [L]
 
 # Stop processing dedicated keyboard landing pages
-#RewriteRule "^keyboards/h/.*$" - [L] 
+RewriteRule "^keyboards/h/.*$" - [L] 
 
 # /keyboards/{install|download|share}/{id}/ to /keyboards/x/id
 #RedirectMatch "^keyboards/(install|download|share)/([^/]+)/$" "/keyboards/$1/$2"
