@@ -43,7 +43,9 @@ RewriteRule "^.well-known/apple-app-site-association$" "/.well-known/apple-app-s
 # ------------------------------------------------------------------
 
 # Remove index.md or index.php and redirect (and stop processing)
-RewriteRule "^((.+)/)?index(\.md|\.php)?$" "$1" [R,L]
+#RewriteRule "^((.+)/)?index(\.md|\.php)?$" "$1" [R,L]
+RewriteRule "^((.+)\/)?index(\.md|\.php)?$" "$1" [R,L]
+#RewriteRule "^((.+)\/)?index$" "$1" [R,L]
 
 # Remove .php extension and redirect
 RewriteRule "^(.+)\.php$" "$1" [R,L]
@@ -196,8 +198,8 @@ RewriteRule "^(_control|go|_test)/(.+)$" "/$1/$2.php" [END]
 RewriteCond "%{DOCUMENT_ROOT}/$1/$2.md" -f
 RewriteRule "^(_control|go|_test)/(.+)$" "/_includes/includes/md/mdhost.php?file=$1/$2.md" [END]
 
-RewriteCond "%{DOCUMENT_ROOT}/$1/index.md" -f
-RewriteRule "^(_control|go|_test)/?$" "/_includes/includes/md/mdhost.php?file=$1/index.md" [END]
+#RewriteCond "%{DOCUMENT_ROOT}/$1/index.md" -f
+#RewriteRule "^(_control|go|_test)(\/)?$" "/_includes/includes/md/mdhost.php?file=$1/index.md" [END]
 
 RewriteCond "%{DOCUMENT_ROOT}/cdn/$1$2" -f
 RewriteRule "^cdn/(.+\.)(gif|js|png|svg)$" "/cdn/$1$2" [END]
@@ -309,4 +311,7 @@ RewriteRule "^(en)/$" "/_content/index.php?lang=$1" [END]
 # Finally, append the terminating slash for folders, given it is no longer
 # done automatically because we put DirectorySlash off
 RewriteCond "%{DOCUMENT_ROOT}/_content/$2$3" -d
-RewriteRule "^(en)(.*)([^/])?$" "$1$2$3/" [R,QSA]
+RewriteRule "^(en)(.+)([^/])?$" "$1$2$3/" [R,QSA]
+
+#RewriteCond "%{DOCUMENT_ROOT}/$1" -d
+#RewriteRule "^(.+)([^/])?$" "$1$2/" [R,QSA]
